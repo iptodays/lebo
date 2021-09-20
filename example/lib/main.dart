@@ -36,8 +36,8 @@ class _MyAppState extends State<MyApp> {
             MaterialButton(
               onPressed: () async {
                 bool result = await Lebo.instance.auth(
-                  appId: '18995',
-                  secretKey: '2d7ff9ee669fbd2070d639e46b9a4515',
+                  appId: '',
+                  secretKey: '',
                   error: (int? code, String? message) {
                     print('$code-----$message');
                   },
@@ -46,6 +46,19 @@ class _MyAppState extends State<MyApp> {
               },
               child: Text(
                 'auth',
+              ),
+            ),
+            MaterialButton(
+              onPressed: () async {
+                List? list = await Lebo.instance.getInterestsArray(
+                  error: (code, msg) {
+                    print('$code-----$msg');
+                  },
+                );
+                print(list);
+              },
+              child: Text(
+                'getInterestsArray',
               ),
             ),
           ],
