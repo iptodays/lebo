@@ -32,6 +32,9 @@ class Lebo {
   static Lebo get instance => _instance;
   static late final Lebo _instance = Lebo._();
 
+  /// 如何使用投屏功能
+  String get helpGuide => 'http://cdn.hpplay.com.cn/h5/app/helpGuide.html';
+
   bool get isAuthorized => _isAuthorized;
   bool _isAuthorized = false;
 
