@@ -13,8 +13,36 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   void initState() {
+    Lebo.instance
+      ..logFileUploadCallback = logFileUploadCallback
+      ..lelinkBrowserError = lelinkBrowserError
+      ..lelinkBrowser = lelinkBrowser
+      ..lelinkConnectionError = lelinkConnectionError
+      ..lelinkConnection = lelinkConnection
+      ..lelinkDisConnection = lelinkDisConnection
+      ..lelinkPlayerError = lelinkPlayerError
+      ..lelinkPlayer = lelinkPlayer
+      ..lelinkPlayerStatus = lelinkPlayerStatus;
     super.initState();
   }
+
+  logFileUploadCallback(succeed, euqid, code, message) {}
+
+  lelinkBrowserError(code, message) {}
+
+  lelinkBrowser(services) {}
+
+  lelinkConnectionError(code, message) {}
+
+  lelinkConnection(service) {}
+
+  lelinkDisConnection(service) {}
+
+  lelinkPlayerError(code, message) {}
+
+  lelinkPlayer(progressInfo) {}
+
+  lelinkPlayerStatus(status) {}
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +81,14 @@ class _MyAppState extends State<MyApp> {
             },
             child: Text(
               'auth',
+            ),
+          ),
+          MaterialButton(
+            onPressed: () async {
+              await Lebo.instance.searchForLelinkService();
+            },
+            child: Text(
+              'searchForLelinkService',
             ),
           ),
           MaterialButton(

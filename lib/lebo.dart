@@ -5,6 +5,18 @@ import 'package:lebo/lb_lelink_service.dart';
 
 import 'lb_lelink_progress_info.dart';
 
+/// 日志上报问题反馈类型
+enum LBLogReportProblemType {
+  caton, //播放片源卡顿
+  blackScreenHaveVoice, //播放片源黑屏有声音
+  notCanPlay, //播放片源无法播放
+  crashBack, //播放片源闪退
+  imageCompression, //播放片源画面压缩
+  loadFailed, //播放片源加载失败
+  soundImageNotSync, //播放片源卡顿
+  other, //其它问题
+}
+
 /// 播放状态
 enum LBLelinkPlayStatus {
   unkown, // 未知状态
@@ -52,10 +64,16 @@ class Lebo {
       'reportAPPTVButtonAction';
   static const String _METHOD_REPORTSERVICELISTDISAPPEAR =
       'reportServiceListDisappear';
+  static const String _METHOD_LOGFILEUPLOADTOLEBOSERVER =
+      'logFileUploadToLeBoServer';
 
+  static const String _METHOD_LOGFILEUPLOADCALLBACK = 'logFileUploadCallback';
   static const String _METHOD_LELINKBROWSER = 'lelinkBrowser';
   static const String _METHOD_LELINKCONNECTION = 'lelinkConnection';
   static const String _METHOD_LELINKPLAYER = 'lelinkPlayer';
+
+  /// 日志上传成功与否回调
+  late void Function(bool, String, int?, String?)? logFileUploadCallback;
 
   /// 搜索错误信息会在此代理方法中回调出来
   late void Function(int, String)? lelinkBrowserError;
@@ -93,6 +111,9 @@ class Lebo {
       return;
     }
     switch (call.method) {
+      case _METHOD_LOGFILEUPLOADCALLBACK:
+        _logFileUploadCallback(args);
+        break;
       case _METHOD_LELINKBROWSER:
         _lelinkBrowser(args);
         break;
@@ -102,6 +123,7 @@ class Lebo {
       case _METHOD_LELINKPLAYER:
         _lelinkPlayer(args);
         break;
+
       default:
     }
   }
@@ -220,6 +242,22 @@ class Lebo {
     _channel.invokeMethod(_METHOD_ENABLELOGFILESAVE, {'enable': enable});
   }
 
+  /// log文件上传到乐播服务器
+  /// * [problemType] 问题类型
+  /// * [contactInfo] 用户联系信息
+  Future<void> logFileUploadToLeBoServer({
+    required LBLogReportProblemType type,
+    required String contactInfo,
+  }) async {
+    _channel.invokeListMethod(
+      _METHOD_LOGFILEUPLOADTOLEBOSERVER,
+      {
+        'type': type.index,
+        'contactInfo': contactInfo,
+      },
+    );
+  }
+
   /// 搜索服务
   Future<void> searchForLelinkService() async {
     _channel.invokeMethod(_METHOD_SEARCHFORLELINKSERVICE);
@@ -239,6 +277,18 @@ class Lebo {
   /// 设备列表消失
   Future<void> reportServiceListDisappear() async {
     _channel.invokeMethod(_METHOD_REPORTSERVICELISTDISAPPEAR);
+  }
+
+  /// 日志是否上传成功
+  void _logFileUploadCallback(args) async {
+    if (this.logFileUploadCallback != null) {
+      this.logFileUploadCallback!(
+        args['succeed'],
+        args['euqid'],
+        args['code'],
+        args['message'],
+      );
+    }
   }
 
   /// LBLelinkBrowserDelegate

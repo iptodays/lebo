@@ -45,7 +45,10 @@ FlutterMethodChannel *channel;
       [self enableLocalNotification:args];
   } else if ([@"enableLogFileSave" isEqualToString:method]) {
       [self enableLogFileSave:args[@"enable"]];
-  } else if ([@"searchForLelinkService" isEqualToString:method]) {
+  } else if ([@"logFileUploadToLeBoServer" isEqualToString:method]) {
+      [self logFileUploadToLeBoServer:args];
+  }
+  else if ([@"searchForLelinkService" isEqualToString:method]) {
       [self searchForLelinkService];
   } else if ([@"stopSearch" isEqualToString:method]) {
       [self stopSearch];
@@ -134,6 +137,47 @@ FlutterMethodChannel *channel;
     [LBLelinkKit enableLogFileSave:enable];
 }
 
+- (void)logFileUploadToLeBoServer:(NSDictionary *)args {
+    LBLogReportProblemType problemType;
+    switch ([args[@"problemType"] intValue]) {
+        case 0:
+            problemType =LBLogReportProblemTypePlayerCaton;
+            break;
+        case 1:
+            problemType =LBLogReportProblemTypePlayerBlackScreenHaveVoice;
+            break;
+        case 2:
+            problemType =LBLogReportProblemTypePlayerNotCanPlay;
+            break;
+        case 3:
+            problemType =LBLogReportProblemTypePlayerCrashBack;
+            break;
+        case 4:
+            problemType =LBLogReportProblemTypePlayerImageCompression;
+            break;
+        case 5:
+            problemType =LBLogReportProblemTypePlayerLoadFailed;
+            break;
+        case 6:
+            problemType =LBLogReportProblemTypePlayerSoundImageNotSync;
+            break;
+        default:
+            problemType =LBLogReportProblemTypePlayerOther;
+            break;
+    }
+    [LBLelinkKit logFileUploadToLeBoServerWithProblemType:problemType userContactInfo:args[@"contactInfo"] callBlock:^(BOOL succeed, NSString * _Nullable euqid, NSError * _Nullable error) {
+        NSMutableDictionary *args = @{
+            @"succeed": @(succeed),
+            @"euqid": euqid,
+        }.mutableCopy;
+        if (error != nil) {
+            args[@"code"]= @(error.code);
+            args[@"message"] = error.localizedDescription;
+        }
+        [channel invokeMethod:@"logFileUploadCallback" arguments:args];
+    }];
+}
+
 - (void)searchForLelinkService {
     [self.lelinkBrowser searchForLelinkService];
 }
@@ -166,9 +210,30 @@ FlutterMethodChannel *channel;
 }
 
 - (void)play:(NSDictionary *)args {
+    LBLelinkMediaType mediaType;
+    switch ([args[@"mediaType"] intValue]) {
+        case 0:
+            mediaType = LBLelinkMediaTypeVideoOnline;
+            break;
+        case 1:
+            mediaType = LBLelinkMediaTypeAudioOnline;
+            break;
+        case 2:
+            mediaType = LBLelinkMediaTypePhotoOnline;
+            break;
+        case 3:
+            mediaType = LBLelinkMediaTypePhotoLocal;
+            break;
+        case 4:
+            mediaType = LBLelinkMediaTypeVideoLocal;
+            break;
+        default:
+            mediaType = LBLelinkMediaTypeAudioLocal;
+            break;
+    }
     self.lelinkPlayer.lelinkConnection = self.lelinkConnection;
     LBLelinkPlayerItem *lelinkPlayerItem = [[LBLelinkPlayerItem alloc] init];
-    lelinkPlayerItem.mediaType = LBLelinkMediaTypeVideoOnline;
+    lelinkPlayerItem.mediaType = mediaType;
     lelinkPlayerItem.mediaURLString = args[@"mediaURLString"];
     [self.lelinkPlayer playWithItem:lelinkPlayerItem];
 }
