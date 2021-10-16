@@ -26,19 +26,34 @@ class _MyAppState extends State<MyApp> {
     super.initState();
   }
 
-  logFileUploadCallback(succeed, euqid, code, message) {}
+  logFileUploadCallback(
+    bool result,
+    String euqid,
+    int? code,
+    String? message,
+  ) {
+    print('code=$code, message=$message');
+  }
 
-  lelinkBrowserError(code, message) {}
+  lelinkBrowserError(code, message) {
+    print('code=$code, message=$message');
+  }
 
-  lelinkBrowser(services) {}
+  lelinkBrowser(List<LBLelinkService> services) {
+    print(services);
+  }
 
-  lelinkConnectionError(code, message) {}
+  lelinkConnectionError(code, message) {
+    print('code=$code, message=$message');
+  }
 
   lelinkConnection(service) {}
 
   lelinkDisConnection(service) {}
 
-  lelinkPlayerError(code, message) {}
+  lelinkPlayerError(code, message) {
+    print('code=$code, message=$message');
+  }
 
   lelinkPlayer(progressInfo) {}
 
@@ -71,8 +86,8 @@ class _MyAppState extends State<MyApp> {
           MaterialButton(
             onPressed: () async {
               bool result = await Lebo.instance.auth(
-                appId: '',
-                secretKey: '',
+                appId: '18995',
+                secretKey: '2d7ff9ee669fbd2070d639e46b9a4515',
                 error: (int? code, String? message) {
                   print('$code-----$message');
                 },

@@ -2,7 +2,7 @@
  * @Author: iptoday 
  * @Date: 2021-09-19 16:32:55 
  * @Last Modified by: iptoday
- * @Last Modified time: 2021-09-19 17:15:08
+ * @Last Modified time: 2021-10-16 16:55:22
  */
 
 class LBLelinkService {
@@ -11,7 +11,7 @@ class LBLelinkService {
   late final String lelinkServiceName;
 
   /// 接收端的唯一标识，公网连接使用
-  late final String tvUID;
+  late final String? tvUID;
 
   /// 接收端的IP地址
   late final String ipAddress;
@@ -29,20 +29,20 @@ class LBLelinkService {
   /// TV端乐播投屏apk的包名为com.hpplay.happyplay.aw，
   /// 可在设备列表中判断receviverPackageName是否等于此包名，
   /// UI上可以加上推荐二字，用户的投屏体验更好
-  late final String receviverPackageName;
+  late final String? receviverPackageName;
 
   /// 接收端DLNA的uuid，注意此字段只针对特殊渠道有效，非通用字段
-  late final String uuid;
+  late final String? uuid;
 
   /// 接收端是否有可升级的新版本
   /// 此属性是搜到TV端乐播投屏apk有新版可更新时，可提示用户升级接收端，体验更好
   late final String hasNewVersion;
 
   /// (非必要的)别名，开发者可开放出来供用户修改服务名称的别名，方便用户自己识别和区分自己的服务
-  late String alias;
+  late String? alias;
 
   /// (非必要的)发送端登录的账号
-  late String vuuid;
+  late String? vuuid;
 
   /// (非必要的)是否为常用
   late bool frequentlyUsed;
@@ -57,7 +57,7 @@ class LBLelinkService {
   late final bool fromQRCode;
 
   /// 接收端的渠道id
-  late final String appID;
+  late final String? appID;
 
   /// 接收端的mirrorReconnect,内部使用
   late final int mirrorReconnect;
@@ -99,28 +99,28 @@ class LBLelinkService {
     required this.lastTimeConnected,
   });
 
-  LBLelinkService.fromJson(Map<String, dynamic> json) {
+  LBLelinkService.fromJson(Map<dynamic, dynamic> json) {
     lelinkServiceName = json['lelinkServiceName'];
     tvUID = json['tvUID'];
     ipAddress = json['ipAddress'];
-    remotePort = json['remotePort'];
-    port = json['port'];
-    lelinkPort = json['lelinkPort'];
+    remotePort = int.parse('${json['remotePort']}');
+    port = int.parse('${json['port']}');
+    lelinkPort = int.parse('${json['lelinkPort']}');
     receviverPackageName = json['receviverPackageName'];
     uuid = json['uuid'];
     hasNewVersion = json['hasNewVersion'];
     alias = json['alias'];
     vuuid = json['vuuid'];
-    frequentlyUsed = json['frequentlyUsed'];
-    onceConnected = json['onceConnected'];
-    lastTimeConnected = json['lastTimeConnected'];
-    fromQRCode = json['fromQRCode'];
+    frequentlyUsed = json['frequentlyUsed'] != '0';
+    onceConnected = json['onceConnected'] != '0';
+    lastTimeConnected = json['lastTimeConnected'] != '0';
+    fromQRCode = json['fromQRCode'] != '0';
     appID = json['appID'];
-    mirrorReconnect = json['mirrorReconnect'];
-    lelinkServiceAvailable = json['lelinkServiceAvailable'];
-    innerLelinkServiceAvailable = json['innerLelinkServiceAvailable'];
-    upnpServiceAvailable = json['upnpServiceAvailable'];
-    imServiceAvailable = json['imServiceAvailable'];
+    mirrorReconnect = int.parse('${json['mirrorReconnect']}');
+    lelinkServiceAvailable = json['lelinkServiceAvailable'] != '0';
+    innerLelinkServiceAvailable = json['innerLelinkServiceAvailable'] != '0';
+    upnpServiceAvailable = json['upnpServiceAvailable'] != '0';
+    imServiceAvailable = json['imServiceAvailable'] != '0';
   }
 
   Map<String, dynamic> toJson() {

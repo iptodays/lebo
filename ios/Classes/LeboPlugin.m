@@ -29,7 +29,9 @@ FlutterMethodChannel *channel;
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
     NSString *method = call.method;
     NSDictionary *args = call.arguments;
-  if ([@"enableLog" isEqualToString:method]) {
+    if ([@"getVersion" isEqualToString:method]) {
+        result(@([self getVersion]));
+    } else if ([@"enableLog" isEqualToString:method]) {
       [self enableLog:args[@"enable"]];
   } else if ([@"auth" isEqualToString:method]) {
       result([self auth:args[@"appId"] key:args[@"secretKey"]]);
@@ -57,7 +59,7 @@ FlutterMethodChannel *channel;
   } else if ([@"reportServiceListDisappear" isEqualToString:method]) {
       [self reportServiceListDisappear];
   } else if ([@"connect" isEqualToString:method]) {
-      [self connect:args[@"tvUID"]];
+      [self connect:args[@"ipAddress"]];
   } else if ([@"play" isEqualToString:method]) {
       [self play:args];
   }
@@ -65,6 +67,10 @@ FlutterMethodChannel *channel;
     result(FlutterMethodNotImplemented);
   }
     result(nil);
+}
+
+- (NSInteger)getVersion {
+    return [LBLelinkKit version];
 }
 
 - (void)enableLog:(BOOL)enable {
@@ -194,10 +200,10 @@ FlutterMethodChannel *channel;
     [self.lelinkBrowser reportServiceListDisappear];
 }
 
-- (void)connect:(NSString *)tvUID {
+- (void)connect:(NSString *)ipAddress {
     LBLelinkService *lelinkService;
     for (LBLelinkService *service in self.lelinkBrowser.lelinkServices) {
-        if ([service.tvUID isEqualToString:tvUID]) {
+        if ([service.ipAddress isEqualToString:ipAddress]) {
             lelinkService = service;
         }
     }
@@ -307,27 +313,27 @@ FlutterMethodChannel *channel;
 }
 
 - (LBLelinkBrowser *)lelinkBrowser {
-    if (self.lelinkBrowser == nil) {
-        self.lelinkBrowser = [[LBLelinkBrowser alloc] init];
-        self.lelinkBrowser.delegate = self;
+    if (_lelinkBrowser == nil) {
+        _lelinkBrowser = [[LBLelinkBrowser alloc] init];
+        _lelinkBrowser.delegate = self;
     }
-    return self.lelinkBrowser;
+    return _lelinkBrowser;
 }
 
 - (LBLelinkConnection *)lelinkConnection {
-    if (self.lelinkConnection == nil) {
-        self.lelinkConnection = [[LBLelinkConnection alloc] init];
-        self.lelinkConnection.delegate = self;
+    if (_lelinkConnection == nil) {
+        _lelinkConnection = [[LBLelinkConnection alloc] init];
+        _lelinkConnection.delegate = self;
     }
-    return self.lelinkConnection;
+    return _lelinkConnection;
 }
 
 - (LBLelinkPlayer *)lelinkPlayer {
-    if (self.lelinkPlayer == nil) {
-        self.lelinkPlayer = [[LBLelinkPlayer alloc] init];
-        self.lelinkPlayer.delegate = self;
+    if (_lelinkPlayer == nil) {
+        _lelinkPlayer = [[LBLelinkPlayer alloc] init];
+        _lelinkPlayer.delegate = self;
     }
-    return self.lelinkPlayer;
+    return _lelinkPlayer;
 }
 
 @end

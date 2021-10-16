@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'package:flutter/services.dart';
-
 import 'package:lebo/lb_lelink_service.dart';
-
 import 'lb_lelink_progress_info.dart';
+
+export 'lb_lelink_progress_info.dart';
+export 'lb_lelink_service.dart';
 
 /// 日志上报问题反馈类型
 enum LBLogReportProblemType {
@@ -50,6 +51,7 @@ class Lebo {
   bool get isAuthorized => _isAuthorized;
   bool _isAuthorized = false;
 
+  static const String _METHOD_GETVERSION = 'getVersion';
   static const String _METHOD_ENABLELOG = 'enableLog';
   static const String _METHOD_AUTH = 'auth';
   static const String _METHOD_SETUSERINFO = 'setUserInfo';
@@ -126,6 +128,11 @@ class Lebo {
 
       default:
     }
+  }
+
+  /// 获取当前SDK版本
+  Future<int> getVersion() async {
+    return await _channel.invokeMethod(_METHOD_GETVERSION);
   }
 
   /// 是否打开log，打印输出在控制台
@@ -303,9 +310,11 @@ class Lebo {
         args.containsKey('services') &&
         args['services'] is List) {
       this.lelinkBrowser!(
-        args['services']
-            .map<LBLelinkService>((e) => LBLelinkService.fromJson(e))
-            .toList(),
+        args['services'].map<LBLelinkService>(
+          (e) {
+            return LBLelinkService.fromJson(e);
+          },
+        ).toList(),
       );
     }
   }
@@ -330,6 +339,8 @@ class Lebo {
     }
   }
 
+  /// LBLelinkPlayerDelegate
+  /// 播放进度信息回调
   void _lelinkPlayer(args) async {
     if (this.lelinkPlayerError != null &&
         args.containsKey('code') &&

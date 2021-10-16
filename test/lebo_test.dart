@@ -1,6 +1,5 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lebo/lebo.dart';
 
 void main() {
   const MethodChannel channel = MethodChannel('lebo');
@@ -21,6 +20,7 @@ void main() {
     // Lebo.enableLog(
     //   enable: true,
     // );
+    // Lebo.instance.version;
   });
 
   test('getPlatformVersion', () async {});
