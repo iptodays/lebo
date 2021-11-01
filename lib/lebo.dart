@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'package:flutter/services.dart';
-import 'package:lebo/lb_lelink_service.dart';
+import 'lb_lelink_player_item.dart';
+import 'lb_lelink_service.dart';
 import 'lb_lelink_progress_info.dart';
 
+export 'lb_lelink_player_item.dart';
 export 'lb_lelink_progress_info.dart';
 export 'lb_lelink_service.dart';
 
@@ -29,14 +31,13 @@ enum LBLelinkPlayStatus {
   error, // 播放错误
 }
 
-/// 媒体类型
-enum LBLelinkMediaType {
-  videoOnline, // 在线视频媒体类型
-  audioOnline, // 在线音频媒体类型
-  photoOnline, // 在线图片媒体类型
-  photoLocal, // 本地图片媒体类型
-  videoLocal, // 本地视频媒体类型 注意：需要APP层启动本地的webServer，生成一个本地视频的URL
-  audioLocal, // 本地音频媒体类型 注意：需要APP层启动本地的webServer，生成一个本地音频的URL
+enum LBPlaySpeedRateType {
+  r_1_0X, // 1.0
+  r_0_5X, // 0.5
+  r_0_75X, // 0.75
+  r_1_25X, // 1.25
+  r_1_5X, // 1.5
+  r_2_0X, // 2.0
 }
 
 class Lebo {
@@ -62,6 +63,20 @@ class Lebo {
   static const String _METHOD_GETINTERESTSARRAY = 'getInterestsArray';
   static const String _METHOD_SEARCHFORLELINKSERVICE = 'searchForLelinkService';
   static const String _METHOD_STOPSEARCH = 'stopSearch';
+  static const String _METHOD_CONNECT = 'connect';
+  static const String _METHOD_DISCONNECT = 'disConnect';
+  static const String _METHOD_PLAY = 'play';
+  static const String _METHOD_PAUSE = 'pause';
+  static const String _METHOD_RESUMEPLAY = 'resumePlay';
+  static const String _METHOD_SEEKTO = 'seekTo';
+  static const String _METHOD_STOP = 'stop';
+  static const String _METHOD_SETVOLUME = 'setVolume';
+  static const String _METHOD_ADDVOLUME = 'addVolume';
+  static const String _METHOD_REDUVEVOLUME = 'reduceVolume';
+  static const String _METHOD_ISSUPPORTCHANGEPLAYSPEED =
+      'isSupportChangePlaySpeed';
+  static const String _METHOD_SETPLAYSPEEDWITHRATE = 'setPlaySpeedWithRate';
+  static const String _METHOD_CANPLAYMEDIA = 'canPlayMedia';
   static const String _METHOD_REPORTAPPTVBUTTONACTION =
       'reportAPPTVButtonAction';
   static const String _METHOD_REPORTSERVICELISTDISAPPEAR =
@@ -138,7 +153,7 @@ class Lebo {
   /// 是否打开log，打印输出在控制台
   /// * [enable] true代表打开，false代表关闭，默认为false
   Future<void> enableLog({required bool enable}) async {
-    _channel.invokeMethod(_METHOD_ENABLELOG, {'enable': enable});
+    await _channel.invokeMethod(_METHOD_ENABLELOG, {'enable': enable});
   }
 
   /// 授权认证接口。
@@ -196,12 +211,12 @@ class Lebo {
     if (uid != null) {
       args['uid'] = uid;
     }
-    _channel.invokeMethod(_METHOD_SETUSERINFO, args);
+    await _channel.invokeMethod(_METHOD_SETUSERINFO, args);
   }
 
   /// 清除用户id
   Future<void> clearUserID() async {
-    _channel.invokeMethod(_METHOD_CLEARUSERID);
+    await _channel.invokeMethod(_METHOD_CLEARUSERID);
   }
 
   /// 获取兴趣数组
@@ -233,7 +248,7 @@ class Lebo {
     String title = '发现一台可以投屏的电视',
     String body = '把你手机上的内容投到大屏电视上，快来试试！',
   }) async {
-    _channel.invokeMethod(
+    await _channel.invokeMethod(
       _METHOD_ENABLELOCALNOTIFICATION,
       {
         'enable': enable,
@@ -246,7 +261,7 @@ class Lebo {
   /// 是否打开log文件保存，保存在沙盒Caches文件夹,（最大10M日志）
   /// * [enable] true代表打开，false代表关闭，默认为false
   Future<void> enableLogFileSave({required bool enable}) async {
-    _channel.invokeMethod(_METHOD_ENABLELOGFILESAVE, {'enable': enable});
+    await _channel.invokeMethod(_METHOD_ENABLELOGFILESAVE, {'enable': enable});
   }
 
   /// log文件上传到乐播服务器
@@ -256,7 +271,7 @@ class Lebo {
     required LBLogReportProblemType type,
     required String contactInfo,
   }) async {
-    _channel.invokeListMethod(
+    await _channel.invokeListMethod(
       _METHOD_LOGFILEUPLOADTOLEBOSERVER,
       {
         'type': type.index,
@@ -267,23 +282,104 @@ class Lebo {
 
   /// 搜索服务
   Future<void> searchForLelinkService() async {
-    _channel.invokeMethod(_METHOD_SEARCHFORLELINKSERVICE);
+    await _channel.invokeMethod(_METHOD_SEARCHFORLELINKSERVICE);
   }
 
   /// 停止搜索，停止搜索后设备列表不会被清空，但是不会更新列表了
   Future<void> stopSearch() async {
-    _channel.invokeMethod(_METHOD_STOPSEARCH);
+    await _channel.invokeMethod(_METHOD_STOPSEARCH);
+  }
+
+  /// 连接设备
+  Future<void> connect(LBLelinkService service) async {
+    await _channel.invokeMethod(_METHOD_CONNECT, service.toJson());
+  }
+
+  /// 取消连接
+  Future<void> disConnect() async {
+    await _channel.invokeMethod(_METHOD_DISCONNECT);
+  }
+
+  /// 播放
+  /// * [LBLelinkPlayerItem]: 播放资源对象
+  Future<void> play(LBLelinkPlayerItem item) async {
+    await _channel.invokeMethod(_METHOD_PLAY, item.toJson());
+  }
+
+  /// 暂停播放
+  Future<void> pause() async {
+    await _channel.invokeMethod(_METHOD_PAUSE);
+  }
+
+  /// 继续播放
+  Future<void> resumePlay() async {
+    await _channel.invokeMethod(_METHOD_RESUMEPLAY);
+  }
+
+  /// 进度调节
+  /// * [seconds]: 调节进度的位置，单位秒
+  Future<void> seekTo(int seconds) async {
+    await _channel.invokeMethod(
+      _METHOD_SEEKTO,
+      {'seconds': seconds},
+    );
+  }
+
+  /// 退出播放
+  Future<void> stop() async {
+    await _channel.invokeMethod(_METHOD_STOP);
+  }
+
+  /// 设置音量值
+  /// * [value]: 音量值，范围0 ~ 100
+  Future<void> setVolume(int value) async {
+    await _channel.invokeMethod(_METHOD_SETVOLUME, {'value': value});
+  }
+
+  /// 增加音量
+  Future<void> addVolume() async {
+    await _channel.invokeMethod(_METHOD_ADDVOLUME);
+  }
+
+  /// 减小音量
+  Future<void> reduceVolume() async {
+    await _channel.invokeMethod(_METHOD_REDUVEVOLUME);
+  }
+
+  /// 查询倍速播放能力
+  Future<bool> isSupportChangePlaySpeed() async {
+    return await _channel.invokeMethod(_METHOD_ISSUPPORTCHANGEPLAYSPEED);
+  }
+
+  /// 设置播放速率
+  Future<void> setPlaySpeedWithRate(LBPlaySpeedRateType rateType) async {
+    await _channel.invokeMethod(
+      _METHOD_SETPLAYSPEEDWITHRATE,
+      {'rateType': rateType.index},
+    );
+  }
+
+  /// 支持的媒体类型判断，
+  /// 在调用- (void)playWithItem:(LBLelinkPlayerItem *)item;之前，
+  /// 先进行判断是否支持该类型的媒体。
+  /// 注意：此接口在连接成功后有效，如果没有连接成功，则返回的都是NO
+  /// @return YES支持，NO不支持
+  Future<bool> canPlayMedia(LBLelinkMediaType mediaType) async {
+    return await _channel.invokeMethod(
+      _METHOD_CANPLAYMEDIA,
+      {'mediaType': mediaType.index},
+    );
   }
 
   /// 投屏行为埋点统计（为了帮助接入方分析用户投屏行为提供足够的数据支撑，需要调用以下两个接口，可选项）
   /// 点击搜索设备时上报
   Future<void> reportAPPTVButtonAction() async {
-    _channel.invokeMethod(_METHOD_REPORTAPPTVBUTTONACTION);
+    await _channel.invokeMethod(_METHOD_REPORTAPPTVBUTTONACTION);
   }
 
   /// 设备列表消失
   Future<void> reportServiceListDisappear() async {
-    _channel.invokeMethod(_METHOD_REPORTSERVICELISTDISAPPEAR);
+    await _channel.invokeMethod(_METHOD_REPORTSERVICELISTDISAPPEAR);
   }
 
   /// 日志是否上传成功

@@ -42,15 +42,13 @@ FlutterMethodChannel *channel;
       [self clearUserID];
   } else if ([@"getInterestsArray" isEqualToString:method]) {
       result([self getInterestsArray]);
-  }
-  else if ([@"enableLocalNotification" isEqualToString:method]) {
+  } else if ([@"enableLocalNotification" isEqualToString:method]) {
       [self enableLocalNotification:args];
   } else if ([@"enableLogFileSave" isEqualToString:method]) {
       [self enableLogFileSave:args[@"enable"]];
   } else if ([@"logFileUploadToLeBoServer" isEqualToString:method]) {
       [self logFileUploadToLeBoServer:args];
-  }
-  else if ([@"searchForLelinkService" isEqualToString:method]) {
+  } else if ([@"searchForLelinkService" isEqualToString:method]) {
       [self searchForLelinkService];
   } else if ([@"stopSearch" isEqualToString:method]) {
       [self stopSearch];
@@ -62,6 +60,28 @@ FlutterMethodChannel *channel;
       [self connect:args[@"ipAddress"]];
   } else if ([@"play" isEqualToString:method]) {
       [self play:args];
+  } else if ([@"disConnect" isEqualToString:method]) {
+      [self disConnect];
+  } else if ([@"pause" isEqualToString:method]) {
+      [self pause];
+  } else if ([@"resumePlay" isEqualToString:method]) {
+      [self resumePlay];
+  } else if ([@"seekTo" isEqualToString:method]) {
+      [self seekTo:[args[@"seconds"] intValue]];
+  } else if ([@"stop" isEqualToString:method]) {
+      [self stop];
+  } else if ([@"setVolume" isEqualToString:method]) {
+      [self setVolume:[args[@"value"] intValue]];
+  } else if ([@"addVolume" isEqualToString:method]) {
+      [self addVolume];
+  } else if ([@"reduceVolume" isEqualToString:method]) {
+      [self reduceVolume];
+  } else if ([@"isSupportChangePlaySpeed" isEqualToString:method]) {
+      result(@([self isSupportChangePlaySpeed]));
+  } else if ([@"setPlaySpeedWithRate" isEqualToString:method]) {
+      [self setPlaySpeedWithRate:[args[@"rateType"] intValue]];
+  } else if ([@"canPlayMedia" isEqualToString:method]) {
+      result(@([self canPlayMedia:[args[@"mediaType"] intValue]]));
   }
   else {
     result(FlutterMethodNotImplemented);
@@ -216,6 +236,7 @@ FlutterMethodChannel *channel;
 }
 
 - (void)play:(NSDictionary *)args {
+    LBLelinkPlayerItem *lelinkPlayerItem = [[LBLelinkPlayerItem alloc] init];
     LBLelinkMediaType mediaType;
     switch ([args[@"mediaType"] intValue]) {
         case 0:
@@ -237,11 +258,181 @@ FlutterMethodChannel *channel;
             mediaType = LBLelinkMediaTypeAudioLocal;
             break;
     }
-    self.lelinkPlayer.lelinkConnection = self.lelinkConnection;
-    LBLelinkPlayerItem *lelinkPlayerItem = [[LBLelinkPlayerItem alloc] init];
     lelinkPlayerItem.mediaType = mediaType;
-    lelinkPlayerItem.mediaURLString = args[@"mediaURLString"];
+    if (![args[@"mediaName"] isKindOfClass:NSNull.class]) {
+        lelinkPlayerItem.mediaName = args[@"mediaName"];
+    }
+    if (![args[@"mediaURLString"] isKindOfClass:NSNull.class]) {
+        lelinkPlayerItem.mediaURLString = args[@"mediaURLString"];
+    }
+    if (![args[@"startPosition"] isKindOfClass:NSNull.class]) {
+        lelinkPlayerItem.startPosition = [args[@"startPosition"] intValue];
+    }
+    if (![args[@"mediaData"] isKindOfClass:NSNull.class]) {
+        lelinkPlayerItem.mediaData = args[@"mediaData"];
+    }
+    if (![args[@"mediaFormatType"] isKindOfClass:NSNull.class]) {
+        LBLelinkMediaFormatType mediaFormatType;
+        switch ([args[@"mediaFormatType"] intValue]) {
+            case 0:
+                mediaFormatType = LBLelinkMediaFormatTypePhotoJpeg;
+                break;
+            default:
+                mediaFormatType = LBLelinkMediaFormatTypePhotoPng;
+                break;
+        }
+        lelinkPlayerItem.mediaFormatType = mediaFormatType;
+    }
+    if (![args[@"headerInfo"] isKindOfClass:NSNull.class]) {
+        lelinkPlayerItem.headerInfo = args[@"headerInfo"];
+    }
+    if (![args[@"aesModel"] isKindOfClass:NSNull.class]) {
+        LBPlayerAesModel *aesModel = [[LBPlayerAesModel alloc] init];
+        NSDictionary *params = args[@"aesModel"];
+        aesModel.model = params[@"model"];
+        aesModel.key = params[@"key"];
+        aesModel.iv = params[@"iv"];
+        lelinkPlayerItem.aesModel = aesModel;
+    }
+    if (![args[@"loopMode"] isKindOfClass:NSNull.class]) {
+        LBLelinkMediaPlayLoopMode loopMode;
+        switch ([args[@"loopMode"] intValue]) {
+            case 0:
+                loopMode = LBLelinkMediaPlayLoopModeDefault;
+                break;
+            case 1:
+                loopMode = LBLelinkMediaPlayLoopModeSingleCycle;
+                break;
+            case 2:
+                loopMode = LBLelinkMediaPlayLoopModeAllCycle;
+                break;
+            case 3:
+                loopMode = LBLelinkMediaPlayLoopModeOrderPlay;
+                break;
+            default:
+                loopMode = LBLelinkMediaPlayLoopModeRandomPlay;
+                break;
+        }
+        lelinkPlayerItem.loopMode = loopMode;
+    }
+    if (![args[@"mediaId"] isKindOfClass:NSNull.class]) {
+        lelinkPlayerItem.mediaId = args[@"mediaId"];
+    }
+    if (![args[@"mediaAssetType"] isKindOfClass:NSNull.class]) {
+        LBPassthMediaAssetMediaType mediaAssetType;
+        switch ([args[@"mediaAssetType"] intValue]) {
+            case 0:
+                mediaAssetType = LBPassthMediaAssetMediaTypeLongVideo;
+                break;
+            case 1:
+                mediaAssetType = LBPassthMediaAssetMediaTypeShortVideo;
+                break;
+            default:
+                mediaAssetType = LBPassthMediaAssetMediaTypeLiveVideo;
+                break;
+        }
+        lelinkPlayerItem.mediaAssetType = mediaAssetType;
+    }
+    if (![args[@"mediaName"] isKindOfClass:NSNull.class]) {
+        lelinkPlayerItem.mediaName = args[@"mediaName"];
+    }
+    if (![args[@"mediaDirector"] isKindOfClass:NSNull.class]) {
+        lelinkPlayerItem.mediaDirector = args[@"mediaDirector"];
+    }
+    if (![args[@"mediaActor"] isKindOfClass:NSNull.class]) {
+        lelinkPlayerItem.mediaActor = args[@"mediaActor"];
+    }
+    if (![args[@"dlnaDIDLId"] isKindOfClass:NSNull.class]) {
+        lelinkPlayerItem.dlnaDIDLId = args[@"dlnaDIDLId"];
+    }
+    if (![args[@"dlnaDIDLResolution"] isKindOfClass:NSNull.class]) {
+        lelinkPlayerItem.dlnaDIDLResolution = args[@"dlnaDIDLResolution"];
+    }
+    self.lelinkPlayer.lelinkConnection = self.lelinkConnection;
     [self.lelinkPlayer playWithItem:lelinkPlayerItem];
+}
+
+
+- (void)pause {
+    [self.lelinkPlayer pause];
+}
+
+- (void)resumePlay {
+    [self.lelinkPlayer resumePlay];
+}
+
+- (void)seekTo:(int)seconds {
+    [self.lelinkPlayer seekTo:seconds];
+}
+
+- (void)stop {
+    [self.lelinkPlayer stop];
+}
+
+- (void)setVolume:(int)volume {
+    [self.lelinkPlayer setVolume:volume];
+}
+
+- (void)addVolume {
+    [self.lelinkPlayer addVolume];
+}
+
+- (void)reduceVolume {
+    [self.lelinkPlayer reduceVolume];
+}
+
+- (BOOL)isSupportChangePlaySpeed {
+    return [self.lelinkPlayer isSupportChangePlaySpeed];
+}
+
+- (void)setPlaySpeedWithRate:(int)index {
+    LBPlaySpeedRateType rateType;
+    switch (index) {
+        case 0:
+            rateType = LBPlaySpeedRate1_0X;
+            break;
+        case 1:
+            rateType = LBPlaySpeedRate0_5X;
+            break;
+        case 2:
+            rateType = LBPlaySpeedRate0_75X;
+            break;
+        case 3:
+            rateType = LBPlaySpeedRate1_25X;
+            break;
+        case 4:
+            rateType = LBPlaySpeedRate1_5X;
+            break;
+        default:
+            rateType = LBPlaySpeedRate2_0X;
+            break;
+    }
+    [self.lelinkPlayer setPlaySpeedWithRate:rateType];
+}
+
+- (BOOL)canPlayMedia:(int)index {
+    LBLelinkMediaType mediaType;
+    switch (index) {
+        case 0:
+            mediaType = LBLelinkMediaTypeVideoOnline;
+            break;
+        case 1:
+            mediaType = LBLelinkMediaTypeAudioOnline;
+            break;
+        case 2:
+            mediaType = LBLelinkMediaTypePhotoOnline;
+            break;
+        case 3:
+            mediaType = LBLelinkMediaTypePhotoLocal;
+            break;
+        case 4:
+            mediaType = LBLelinkMediaTypeVideoLocal;
+            break;
+        default:
+            mediaType = LBLelinkMediaTypeAudioLocal;
+            break;
+    }
+    return [self.lelinkPlayer canPlayMedia:mediaType];
 }
 
 #pragma mark - LBLelinkBrowserDelegate

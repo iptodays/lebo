@@ -11,6 +11,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  List<LBLelinkService> list = [];
+
   @override
   void initState() {
     Lebo.instance
@@ -40,14 +42,26 @@ class _MyAppState extends State<MyApp> {
   }
 
   lelinkBrowser(List<LBLelinkService> services) {
-    print(services);
+    list = services;
+    print(services.map((e) => e.lelinkServiceName).toList());
+    setState(() {});
   }
 
   lelinkConnectionError(code, message) {
-    print('code=$code, message=$message');
+    print('LEBO-连接失败: code=$code, message=$message');
   }
 
-  lelinkConnection(service) {}
+  lelinkConnection(LBLelinkService service) {
+    print('LEBO-连接成功: ${service.lelinkServiceName}');
+    Lebo.instance.play(
+      LBLelinkPlayerItem(
+        mediaType: LBLelinkMediaType.videoOnline,
+        mediaURLString: 'https://media.w3.org/2010/05/sintel/trailer.mp4',
+        loopMode: LBLelinkMediaPlayLoopMode.defaul,
+        mediaAssetType: LBPassthMediaAssetMediaType.longVideo,
+      ),
+    );
+  }
 
   lelinkDisConnection(service) {}
 
@@ -86,8 +100,8 @@ class _MyAppState extends State<MyApp> {
           MaterialButton(
             onPressed: () async {
               bool result = await Lebo.instance.auth(
-                appId: '18995',
-                secretKey: '2d7ff9ee669fbd2070d639e46b9a4515',
+                appId: '',
+                secretKey: '',
                 error: (int? code, String? message) {
                   print('$code-----$message');
                 },
@@ -108,6 +122,14 @@ class _MyAppState extends State<MyApp> {
           ),
           MaterialButton(
             onPressed: () async {
+              await Lebo.instance.stopSearch();
+            },
+            child: Text(
+              'stopForLelinkService',
+            ),
+          ),
+          MaterialButton(
+            onPressed: () async {
               List? list = await Lebo.instance.getInterestsArray(
                 error: (code, msg) {
                   print('$code-----$msg');
@@ -119,6 +141,27 @@ class _MyAppState extends State<MyApp> {
               'getInterestsArray',
             ),
           ),
+          Text('发现的设备'),
+          ListView.builder(
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            itemBuilder: (_, index) {
+              LBLelinkService model = list[index];
+              return InkWell(
+                onTap: () async {
+                  await Lebo.instance.connect(model);
+                },
+                child: Container(
+                  alignment: Alignment.center,
+                  height: 56,
+                  child: Text(
+                    model.lelinkServiceName,
+                  ),
+                ),
+              );
+            },
+            itemCount: list.length,
+          )
         ],
       ),
     );
