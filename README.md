@@ -1,6 +1,6 @@
 # lebo
 
-乐播投屏 SDK
+乐播SDK
 
 ## Getting Started
 

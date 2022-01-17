@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lebo/lebo.dart';
 
 void main() {
   const MethodChannel channel = MethodChannel('lebo');
@@ -16,12 +17,7 @@ void main() {
     channel.setMockMethodCallHandler(null);
   });
 
-  test('enableLog', () async {
-    // Lebo.enableLog(
-    //   enable: true,
-    // );
-    // Lebo.instance.version;
+  test('getPlatformVersion', () async {
+    expect(await Lebo.platformVersion, '42');
   });
-
-  test('getPlatformVersion', () async {});
 }

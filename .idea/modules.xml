@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/lebo.iml" filepath="$PROJECT_DIR$/lebo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android/lebo_android.iml" filepath="$PROJECT_DIR$/android/lebo_android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/example/android/lebo_example_android.iml" filepath="$PROJECT_DIR$/example/android/lebo_example_android.iml" />
     </modules>
   </component>
 </project>
