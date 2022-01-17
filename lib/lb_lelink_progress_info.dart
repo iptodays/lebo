@@ -12,8 +12,8 @@ class LBLelinkProgressInfo {
   late final int duration;
 
   LBLelinkProgressInfo({
-    required int duration,
-    required int currentTime,
+    required this.duration,
+    required this.currentTime,
   });
 
   LBLelinkProgressInfo.fromJson(Map<String, dynamic> json) {
