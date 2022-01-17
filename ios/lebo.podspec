@@ -16,9 +16,16 @@ lebo sdk
   s.source_files = 'Classes/**/*'
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
-  s.dependency 'LBLelinkKit', '30706'
-  s.ios.vendored_frameworks = 'LBLelinkKit.framework'
   s.platform = :ios, '8.0'
+
+  s.requires_arc = true
+  s.ios.libraries = 'xml2','resolv.9'
+  s.xcconfig = { 'HEADER_SEARCH_PATHS' => '$(SDKROOT)/usr/include/libxml2' }
+  s.xcconfig = { 'HEADER_SEARCH_PATHS' => '$(SDKROOT)/usr/include/libxml2' }
+
+# File patterns
+  #s.public_header_files = 'LBLelinkKit.framework/*.h'
+  s.ios.vendored_frameworks = 'LBLelinkKit.framework'
 
   # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
