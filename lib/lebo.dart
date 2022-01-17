@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'lb_lelink_player_item.dart';
 import 'lb_lelink_service.dart';
@@ -52,41 +53,71 @@ class Lebo {
   bool get isAuthorized => _isAuthorized;
   bool _isAuthorized = false;
 
+  // ignore: constant_identifier_names
   static const String _METHOD_GETVERSION = 'getVersion';
+  // ignore: constant_identifier_names
   static const String _METHOD_ENABLELOG = 'enableLog';
+  // ignore: constant_identifier_names
   static const String _METHOD_AUTH = 'auth';
+  // ignore: constant_identifier_names
   static const String _METHOD_SETUSERINFO = 'setUserInfo';
+  // ignore: constant_identifier_names
   static const String _METHOD_CLEARUSERID = 'clearUserID';
+  // ignore: constant_identifier_names
   static const String _METHOD_ENABLELOCALNOTIFICATION =
       'enableLocalNotification';
+  // ignore: constant_identifier_names
   static const String _METHOD_ENABLELOGFILESAVE = 'enableLogFileSave';
+  // ignore: constant_identifier_names
   static const String _METHOD_GETINTERESTSARRAY = 'getInterestsArray';
+  // ignore: constant_identifier_names
   static const String _METHOD_SEARCHFORLELINKSERVICE = 'searchForLelinkService';
+  // ignore: constant_identifier_names
   static const String _METHOD_STOPSEARCH = 'stopSearch';
+  // ignore: constant_identifier_names
   static const String _METHOD_CONNECT = 'connect';
+  // ignore: constant_identifier_names
   static const String _METHOD_DISCONNECT = 'disConnect';
+  // ignore: constant_identifier_names
   static const String _METHOD_PLAY = 'play';
+  // ignore: constant_identifier_names
   static const String _METHOD_PAUSE = 'pause';
+  // ignore: constant_identifier_names
   static const String _METHOD_RESUMEPLAY = 'resumePlay';
+  // ignore: constant_identifier_names
   static const String _METHOD_SEEKTO = 'seekTo';
+  // ignore: constant_identifier_names
   static const String _METHOD_STOP = 'stop';
+  // ignore: constant_identifier_names
   static const String _METHOD_SETVOLUME = 'setVolume';
+  // ignore: constant_identifier_names
   static const String _METHOD_ADDVOLUME = 'addVolume';
+  // ignore: constant_identifier_names
   static const String _METHOD_REDUVEVOLUME = 'reduceVolume';
+  // ignore: constant_identifier_names
   static const String _METHOD_ISSUPPORTCHANGEPLAYSPEED =
       'isSupportChangePlaySpeed';
+  // ignore: constant_identifier_names
   static const String _METHOD_SETPLAYSPEEDWITHRATE = 'setPlaySpeedWithRate';
+  // ignore: constant_identifier_names
   static const String _METHOD_CANPLAYMEDIA = 'canPlayMedia';
+  // ignore: constant_identifier_names
   static const String _METHOD_REPORTAPPTVBUTTONACTION =
       'reportAPPTVButtonAction';
+  // ignore: constant_identifier_names
   static const String _METHOD_REPORTSERVICELISTDISAPPEAR =
       'reportServiceListDisappear';
+  // ignore: constant_identifier_names
   static const String _METHOD_LOGFILEUPLOADTOLEBOSERVER =
       'logFileUploadToLeBoServer';
 
+  // ignore: constant_identifier_names
   static const String _METHOD_LOGFILEUPLOADCALLBACK = 'logFileUploadCallback';
+  // ignore: constant_identifier_names
   static const String _METHOD_LELINKBROWSER = 'lelinkBrowser';
+  // ignore: constant_identifier_names
   static const String _METHOD_LELINKCONNECTION = 'lelinkConnection';
+  // ignore: constant_identifier_names
   static const String _METHOD_LELINKPLAYER = 'lelinkPlayer';
 
   /// 日志上传成功与否回调
@@ -124,7 +155,7 @@ class Lebo {
   /// 由原生调用flutter的处理
   Future<dynamic> _setMethodCallHandler(MethodCall call) async {
     var args = call.arguments;
-    if (!(args is Map)) {
+    if (args is! Map) {
       return;
     }
     switch (call.method) {
@@ -384,8 +415,8 @@ class Lebo {
 
   /// 日志是否上传成功
   void _logFileUploadCallback(args) async {
-    if (this.logFileUploadCallback != null) {
-      this.logFileUploadCallback!(
+    if (logFileUploadCallback != null) {
+      logFileUploadCallback!(
         args['succeed'],
         args['euqid'],
         args['code'],
@@ -397,15 +428,15 @@ class Lebo {
   /// LBLelinkBrowserDelegate
   /// 开启搜索后的回调
   void _lelinkBrowser(args) async {
-    if (this.lelinkBrowserError != null &&
+    if (lelinkBrowserError != null &&
         args.containsKey('code') &&
         args.containsKey('message')) {
-      this.lelinkBrowserError!(args['code'], args['message']);
+      lelinkBrowserError!(args['code'], args['message']);
     }
-    if (this.lelinkBrowser != null &&
+    if (lelinkBrowser != null &&
         args.containsKey('services') &&
         args['services'] is List) {
-      this.lelinkBrowser!(
+      lelinkBrowser!(
         args['services'].map<LBLelinkService>(
           (e) {
             return LBLelinkService.fromJson(e);
@@ -418,38 +449,40 @@ class Lebo {
   /// LBLelinkConnectionDelegate
   /// 连接服务的回调
   void _lelinkConnection(args) async {
-    if (this.lelinkConnectionError != null &&
+    if (lelinkConnectionError != null &&
         args.containsKey('code') &&
         args.containsKey('message')) {
-      this.lelinkConnectionError!(args['code'], args['message']);
+      lelinkConnectionError!(args['code'], args['message']);
     }
-    if (this.lelinkConnection != null &&
+    if (lelinkConnection != null &&
         args.containsKey('service') &&
         args.containsKey('connection')) {
-      this.lelinkConnection!(LBLelinkService.fromJson(args['service']));
+      lelinkConnection!(LBLelinkService.fromJson(args['service']));
     }
-    if (this.lelinkDisConnection != null &&
+    if (lelinkDisConnection != null &&
         args.containsKey('service') &&
         args.containsKey('didConnect')) {
-      this.lelinkDisConnection!(LBLelinkService.fromJson(args['service']));
+      lelinkDisConnection!(LBLelinkService.fromJson(args['service']));
     }
   }
 
   /// LBLelinkPlayerDelegate
   /// 播放进度信息回调
   void _lelinkPlayer(args) async {
-    if (this.lelinkPlayerError != null &&
+    if (lelinkPlayerError != null &&
         args.containsKey('code') &&
         args.containsKey('message')) {
-      this.lelinkPlayerError!(args['code'], args['message']);
+      lelinkPlayerError!(args['code'], args['message']);
     }
-    if (this.lelinkPlayerStatus != null && args.containsKey('status')) {
-      print('status = ${args['status']}');
+    if (lelinkPlayerStatus != null && args.containsKey('status')) {
+      if (kDebugMode) {
+        print('status = ${args['status']}');
+      }
     }
-    if (this.lelinkPlayer != null &&
+    if (lelinkPlayer != null &&
         args.containsKey('currentTime') &&
         args.containsKey('duration')) {
-      this.lelinkPlayer!(LBLelinkProgressInfo.fromJson(args));
+      lelinkPlayer!(LBLelinkProgressInfo.fromJson(args));
     }
   }
 }

@@ -23,8 +23,8 @@ class LBLelinkProgressInfo {
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = {};
-    json['currentTime'] = this.currentTime;
-    json['duration'] = this.duration;
+    json['currentTime'] = currentTime;
+    json['duration'] = duration;
     return json;
   }
 }

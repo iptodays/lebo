@@ -125,27 +125,27 @@ class LBLelinkService {
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = {};
-    json['lelinkServiceName'] = this.lelinkServiceName;
-    json['tvUID'] = this.tvUID;
-    json['ipAddress'] = this.ipAddress;
-    json['remotePort'] = this.remotePort;
-    json['port'] = this.port;
-    json['lelinkPort'] = this.lelinkPort;
-    json['receviverPackageName'] = this.receviverPackageName;
-    json['uuid'] = this.uuid;
-    json['hasNewVersion'] = this.hasNewVersion;
-    json['alias'] = this.alias;
-    json['vuuid'] = this.vuuid;
-    json['frequentlyUsed'] = this.frequentlyUsed;
-    json['onceConnected'] = this.onceConnected;
-    json['lastTimeConnected'] = this.lastTimeConnected;
-    json['fromQRCode'] = this.fromQRCode;
-    json['appID'] = this.appID;
-    json['mirrorReconnect'] = this.mirrorReconnect;
-    json['lelinkServiceAvailable'] = this.lelinkServiceAvailable;
-    json['innerLelinkServiceAvailable'] = this.innerLelinkServiceAvailable;
-    json['upnpServiceAvailable'] = this.upnpServiceAvailable;
-    json['imServiceAvailable'] = this.imServiceAvailable;
+    json['lelinkServiceName'] = lelinkServiceName;
+    json['tvUID'] = tvUID;
+    json['ipAddress'] = ipAddress;
+    json['remotePort'] = remotePort;
+    json['port'] = port;
+    json['lelinkPort'] = lelinkPort;
+    json['receviverPackageName'] = receviverPackageName;
+    json['uuid'] = uuid;
+    json['hasNewVersion'] = hasNewVersion;
+    json['alias'] = alias;
+    json['vuuid'] = vuuid;
+    json['frequentlyUsed'] = frequentlyUsed;
+    json['onceConnected'] = onceConnected;
+    json['lastTimeConnected'] = lastTimeConnected;
+    json['fromQRCode'] = fromQRCode;
+    json['appID'] = appID;
+    json['mirrorReconnect'] = mirrorReconnect;
+    json['lelinkServiceAvailable'] = lelinkServiceAvailable;
+    json['innerLelinkServiceAvailable'] = innerLelinkServiceAvailable;
+    json['upnpServiceAvailable'] = upnpServiceAvailable;
+    json['imServiceAvailable'] = imServiceAvailable;
     return json;
   }
 }

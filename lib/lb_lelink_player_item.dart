@@ -106,23 +106,23 @@ class LBLelinkPlayerItem {
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = <String, dynamic>{};
-    json['mediaType'] = this.mediaType.index;
-    json['mediaURLString'] = this.mediaURLString;
-    json['startPosition'] = this.startPosition;
-    json['mediaData'] = this.mediaData;
-    json['mediaFormatType'] = this.mediaFormatType?.index;
-    json['headerInfo'] = this.headerInfo;
-    if (this.aesModel != null) {
-      json['aesModel'] = this.aesModel!.toJson();
+    json['mediaType'] = mediaType.index;
+    json['mediaURLString'] = mediaURLString;
+    json['startPosition'] = startPosition;
+    json['mediaData'] = mediaData;
+    json['mediaFormatType'] = mediaFormatType?.index;
+    json['headerInfo'] = headerInfo;
+    if (aesModel != null) {
+      json['aesModel'] = aesModel!.toJson();
     }
-    json['loopMode'] = this.loopMode?.index;
-    json['mediaId'] = this.mediaId;
-    json['mediaAssetType'] = this.mediaAssetType?.index;
-    json['mediaName'] = this.mediaName;
-    json['mediaDirector'] = this.mediaDirector;
-    json['mediaActor'] = this.mediaActor;
-    json['dlnaDIDLId'] = this.dlnaDIDLId;
-    json['dlnaDIDLResolution'] = this.dlnaDIDLResolution;
+    json['loopMode'] = loopMode?.index;
+    json['mediaId'] = mediaId;
+    json['mediaAssetType'] = mediaAssetType?.index;
+    json['mediaName'] = mediaName;
+    json['mediaDirector'] = mediaDirector;
+    json['mediaActor'] = mediaActor;
+    json['dlnaDIDLId'] = dlnaDIDLId;
+    json['dlnaDIDLResolution'] = dlnaDIDLResolution;
     return json;
   }
 }
@@ -139,16 +139,16 @@ class LBPlayerAesModel {
   String? iv;
 
   LBPlayerAesModel({
-    this.model,
-    this.key,
-    this.iv,
+    model,
+    key,
+    iv,
   });
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = <String, dynamic>{};
-    json['model'] = this.model;
-    json['key'] = this.key;
-    json['iv'] = this.iv;
+    json['model'] = model;
+    json['key'] = key;
+    json['iv'] = iv;
     return json;
   }
 }
